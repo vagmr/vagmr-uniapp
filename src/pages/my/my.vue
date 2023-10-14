@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores/index'
-
+import { request } from '@/utils/request'
 const memberStore = useMemberStore()
-const getData = () => {
-  uni.request({
+const getData = async () => {
+  const res = await request<string[]>({
     method: 'GET',
     url: '/home/banner',
   })
+  console.log(res)
 }
 </script>
 
@@ -26,7 +27,7 @@ const getData = () => {
       保存用户信息
     </button>
     <button @tap="memberStore.clearProfile()" size="mini" plain type="warn">清理用户信息</button>
-    <button @tap="getData">发送请求</button>
+    <button @tap="getData" size="mini" plain type="primary">发送请求</button>
   </view>
 </template>
 
