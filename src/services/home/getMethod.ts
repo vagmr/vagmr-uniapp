@@ -1,5 +1,6 @@
 import { customRequest } from '@/utils/request'
-import type { bannerItem, categoryItem, hotShopItem } from '@/types/home'
+import type { bannerItem, categoryItem, hotShopItem, GuessItem } from '@/types/home'
+import type { PageResult } from '@/types/global'
 /**
  * Retrieves the banner for the specified distribution site.
  * -首页-广告区域-小程序
@@ -32,5 +33,10 @@ export const getCategory = () => {
 export const hotRecomand = () => {
   return customRequest<hotShopItem[]>({
     url: '/home/hot/mutli',
+  })
+}
+export const guessLikeApi = () => {
+  return customRequest<PageResult<GuessItem>>({
+    url: '/home/goods/guessLike',
   })
 }
