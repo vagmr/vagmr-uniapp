@@ -4,8 +4,9 @@
  * declare module 'vue'
  */
 import 'vue'
+import vagSwiper from '@/components/vag-Swiper.vue'
 declare module 'vue' {
   export interface GlobalComponents {
-    //
+    'vag-Swiper': typeof vagSwiper
   }
 }

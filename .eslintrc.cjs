@@ -22,6 +22,7 @@ module.exports = {
     Page: true,
     Component: true,
     AnyObject: true,
+    defineOptions: 'writable',
   },
   parserOptions: {
     ecmaVersion: 'latest',
