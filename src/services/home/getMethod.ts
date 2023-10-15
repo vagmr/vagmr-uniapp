@@ -1,5 +1,5 @@
 import { customRequest } from '@/utils/request'
-import type { bannerItem, categoryItem } from '@/types/home'
+import type { bannerItem, categoryItem, hotShopItem } from '@/types/home'
 /**
  * Retrieves the banner for the specified distribution site.
  * -首页-广告区域-小程序
@@ -20,5 +20,17 @@ export const getBanner = (distributionSite: number = 1): Promise<any> => {
 export const getCategory = () => {
   return customRequest<categoryItem[]>({
     url: '/home/category/mutli',
+  })
+}
+
+/**
+ * 热门推荐模块的请求函数
+ *
+ * @return {Promise} A promise that resolves with the hot recommendations.
+ */
+
+export const hotRecomand = () => {
+  return customRequest<hotShopItem[]>({
+    url: '/home/hot/mutli',
   })
 }

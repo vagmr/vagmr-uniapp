@@ -13,3 +13,11 @@ export type categoryItem = {
   icon: string
   name: string
 }
+export type hotShopItem = {
+  id: string
+  alt: string
+  pictures: string[]
+  target: string
+  title: string
+  type: string
+}

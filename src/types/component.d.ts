@@ -8,5 +8,6 @@ import vagSwiper from '@/components/vag-Swiper.vue'
 declare module 'vue' {
   export interface GlobalComponents {
     'vag-Swiper': typeof vagSwiper
+    'vag-guessLike': typeof import('@/components/vag-guessLike.vue')['default']
   }
 }
