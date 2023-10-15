@@ -7,7 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import CategoryPanel from './componets/categoryPanel.vue'
 import HotPanel from './componets/hotPanel.vue'
-
+import type { vagGuessInstance } from '@/types/component.d.ts'
 //定义数组存放数据
 const bannerList = ref<bannerItem[]>([])
 //分类数据存放
@@ -27,6 +27,19 @@ const getHot = async () => {
   const res = await hotRecomand()
   hotReList.value = res.result
 }
+//获取更多分页
+const guessRef = ref<vagGuessInstance>()
+
+const onLower = () => {
+  guessRef.value?.getGuessLike()
+}
+//自定义下拉刷新处理函数
+const isTrigge = ref(false)
+const onRefresh = async () => {
+  isTrigge.value = true
+  await Promise.all([getBanner(), getHot()])
+  isTrigge.value = false
+}
 onLoad(() => {
   getBannerRe()
   getCategoryRe()
@@ -36,11 +49,18 @@ onLoad(() => {
 
 <template>
   <custom-navbar />
-  <scroll-view class="container" scroll-y>
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresh"
+    :refresher-triggered="isTrigge"
+    @scrolltolower="onLower"
+    class="container"
+    scroll-y
+  >
     <vag-Swiper :bannerList="bannerList" />
     <CategoryPanel :categoryList="categoryList" />
     <HotPanel :list="hotReList" />
-    <vag-guessLike />
+    <vag-guessLike ref="guessRef" />
   </scroll-view>
 </template>
 

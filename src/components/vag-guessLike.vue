@@ -3,16 +3,34 @@
 import { guessLikeApi } from '@/services/home/getMethod'
 import { onMounted, ref } from 'vue'
 import type { GuessItem } from '@/types/home'
+import type { PageParams } from '@/types/global'
 
 //猜你喜欢模块封装
 const guessLikeList = ref<GuessItem[]>([])
+const pageConfig: Required<PageParams> = {
+  page: 1,
+  pageSize: 10,
+}
+const finish = ref(false)
 const getGuessLike = async () => {
-  const res = await guessLikeApi()
-  console.log(res.result)
-  guessLikeList.value = res.result.items
+  if (finish.value) {
+    return uni.showToast({ title: '没有更多数据了', icon: 'none' })
+  }
+  const res = await guessLikeApi(pageConfig)
+  guessLikeList.value.push(...res.result.items)
+  //判断是否还有更多
+  if (pageConfig.page < res.result.pages) {
+    //加载更多
+    pageConfig.page++
+  } else {
+    finish.value = true
+  }
 }
 onMounted(() => {
   getGuessLike()
+})
+defineExpose({
+  getGuessLike,
 })
 </script>
 
@@ -36,7 +54,7 @@ onMounted(() => {
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text"> {{ finish ? '没有更多数据了' : '正在加载...' }}</view>
 </template>
 
 <style lang="scss">
