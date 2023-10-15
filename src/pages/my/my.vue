@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores/index'
-import { request } from '@/utils/request'
+import { customRequest } from '@/utils/request'
 const memberStore = useMemberStore()
 const getData = async () => {
-  const res = await request<string[]>({
+  const res = await customRequest<string[]>({
     method: 'GET',
     url: '/home/banner',
   })

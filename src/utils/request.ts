@@ -9,8 +9,8 @@ const httpInterceptor = {
     // 2. 请求超时
     config.timeout = 10000
     config.header = {
-      ...config.header,
       'source-client': 'miniapp',
+      ...config.header,
     }
     // 4. 添加 token 请求头标识
     const memberStore = useMemberStore()
@@ -39,12 +39,12 @@ interface Data<T> {
  * @return {Promise<Data<T>>} A promise that resolves with the response data.
  * @template T
  */
-export const request = <T>(config: UniApp.RequestOptions): Promise<Data<T>> => {
+export const customRequest = <T>(config: UniApp.RequestOptions): Promise<Data<T>> => {
   return new Promise<Data<T>>((resolve, reject) => {
     uni.request({
       ...config,
       success(res) {
-        if (res.statusCode > 200 && res.statusCode < 300) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
           //提取核心数据 res.data
           resolve(res.data as Data<T>)
         } else if (res.statusCode === 401) {
