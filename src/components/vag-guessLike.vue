@@ -29,8 +29,15 @@ const getGuessLike = async () => {
 onMounted(() => {
   getGuessLike()
 })
+//下拉刷新,重置数据
+const reStore = () => {
+  pageConfig.page = 1
+  guessLikeList.value = []
+  finish.value = false
+}
 defineExpose({
   getGuessLike,
+  reStore,
 })
 </script>
 

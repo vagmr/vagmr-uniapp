@@ -8,6 +8,7 @@ import { ref } from 'vue'
 import CategoryPanel from './componets/categoryPanel.vue'
 import HotPanel from './componets/hotPanel.vue'
 import type { vagGuessInstance } from '@/types/component.d.ts'
+import skeleton from '@/pages/index/componets/skeleton.vue'
 //定义数组存放数据
 const bannerList = ref<bannerItem[]>([])
 //分类数据存放
@@ -37,13 +38,16 @@ const onLower = () => {
 const isTrigge = ref(false)
 const onRefresh = async () => {
   isTrigge.value = true
+  guessRef.value?.reStore()
   await Promise.all([getBanner(), getHot()])
   isTrigge.value = false
 }
-onLoad(() => {
-  getBannerRe()
-  getCategoryRe()
-  getHot()
+//页面加载
+const isLoading = ref(true)
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getBannerRe(), getCategoryRe(), getHot()])
+  isLoading.value = false
 })
 </script>
 
@@ -57,10 +61,13 @@ onLoad(() => {
     class="container"
     scroll-y
   >
-    <vag-Swiper :bannerList="bannerList" />
-    <CategoryPanel :categoryList="categoryList" />
-    <HotPanel :list="hotReList" />
-    <vag-guessLike ref="guessRef" />
+    <skeleton v-if="isLoading" />
+    <template v-else>
+      <vag-Swiper :bannerList="bannerList" />
+      <CategoryPanel :categoryList="categoryList" />
+      <HotPanel :list="hotReList" />
+      <vag-guessLike ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
