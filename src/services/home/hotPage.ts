@@ -1,7 +1,8 @@
 import { customRequest } from '@/utils/request'
 import type { PageParams } from '@/types/global'
+import type { HotResult } from '@/types/hot'
 
-type hotParams = PageParams & { subType: string }
+type hotParams = PageParams & { subType?: string }
 /**
  * This function makes an API call to the hot page with the given URL and data.
  * 热门推荐模块的通用请求函数
@@ -10,7 +11,7 @@ type hotParams = PageParams & { subType: string }
  * @return {Promise<any>} - A Promise that resolves to the response from the API call.
  */
 export const hotPageApi = (url: string, data?: hotParams) => {
-  return customRequest({
+  return customRequest<HotResult>({
     url,
     data,
   })

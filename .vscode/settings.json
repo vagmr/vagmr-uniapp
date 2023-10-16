@@ -4,6 +4,22 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
+  // 工作区主题
+  "workbench.colorTheme": "Electron vue",
+  "powermode.enabled": true, //启动效果
+  "powermode.presets": "magic",
+  "powermode.shake.intensity": 0.9,
+  "powermode.combo.counterEnabled": "show",
+  "powermode.combo.location": "editor",
+  // flames 火花效果、  particles 粒子、 magic 魔法、 fireworks 烟花、 clippy 曲别针
+  // "powermode.enableShake": false, // 关闭代码抖动 「建议关闭，开启容易眼睛花」
+  // 修改注释颜色
+  "editor.tokenColorCustomizations": {
+    "comments": {
+      "fontStyle": "bold",
+      "foreground": "#22d5ae",
+    }
+  },
   //导入文件时是否携带文件的扩展名
   "path-autocomplete.extensionOnImport": true,
   //配置@的路径提示
@@ -11,9 +27,9 @@
     "@": "${folder}/src"
   },
   // 文件格式化配置
-  "[json]": {
+/*   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  }, */
   // 配置语言的文件关联
   "files.associations": {
     "pages.json": "jsonc", // pages.json 可以写注释
