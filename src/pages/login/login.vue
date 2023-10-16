@@ -2,6 +2,29 @@
 
 <script setup lang="ts">
 //
+import { onLoad } from '@dcloudio/uni-app'
+import { loginApi, mockLoginApi } from '@/services/login/loginMethod'
+let code = ''
+onLoad(async () => {
+  const res = await wx.login()
+  code = res.code
+})
+/**
+ * Get phone data from UniHelper button event.
+ *企业开发使用，个人开发者无法使用，此函数作为回调
+ * 需要在按钮中使用open-type="getPhoneNumber"
+ * @param {UniHelper.ButtonOnGetphonenumber} e - 回调参数
+ * @return {Promise<void>} - A promise that resolves to nothing.
+ */
+const getPhoneData: UniHelper.ButtonOnGetphonenumber = async (e) => {
+  const encryptedData = e.detail.encryptedData!
+  const iv = e.detail.iv!
+  await loginApi({ code, encryptedData, iv })
+}
+const mockLogin = async () => {
+  const res = await mockLoginApi('13164654387')
+  console.log(res)
+}
 </script>
 
 <template>
@@ -18,9 +41,9 @@
       <!-- <button class="button phone">登录</button> -->
 
       <!-- 小程序端授权登录 -->
-      <button class="button phone">
+      <button class="button phone" open-type="getPhoneNumber" @getphonenumber="getPhoneData">
         <text class="icon icon-phone"></text>
-        手机号快捷登录
+        手机号快捷登录(个人开发者无法使用)
       </button>
       <view class="extra">
         <view class="caption">
@@ -28,12 +51,12 @@
         </view>
         <view class="options">
           <!-- 通用模拟登录 -->
-          <button>
-            <text class="icon icon-phone">模拟快捷登录</text>
+          <button @tap="mockLogin">
+            <text class="icon icon-phone">快捷登录(请使用这个)</text>
           </button>
         </view>
       </view>
-      <view class="tips">登录/注册即视为你同意《服务条款》和《小兔鲜儿隐私协议》</view>
+      <view class="tips">登录/注册即视为你同意《服务条款》和《vagmr隐私协议》</view>
     </view>
   </view>
 </template>
