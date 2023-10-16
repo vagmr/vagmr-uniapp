@@ -4,6 +4,8 @@ import { getShopDeatilApi } from '@/services/category/shopDetail'
 import type { GoodsResult } from '@/types/shopDetail'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import addressInfo from '@/pages/shopDatail/components/addressInfo.vue'
+import serverInfo from '@/pages/shopDatail/components/serverInfo.vue'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 //接收传递过来的id
@@ -15,6 +17,29 @@ const getShopDetailData = async () => {
   const res = await getShopDeatilApi(shopId.id)
   console.log(res)
   shopDetailList.value = res.result
+}
+//改变图片的索引
+const currentIndex = ref(0)
+const onChange: UniHelper.SwiperOnChange = (ev) => {
+  currentIndex.value = ev.detail.current
+}
+//大图预览
+const imgPreview = (url: string) => {
+  uni.previewImage({
+    url,
+    urls: shopDetailList.value!.mainPictures,
+  })
+}
+//弹出层组件属性
+const tcc = ref<{
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
+//弹出层条件渲染
+const propName = ref<'address' | 'server'>()
+const openPopup = (prop: typeof propName.value) => {
+  propName.value = prop
+  tcc.value?.open()
 }
 //加载数据
 onLoad(() => {
@@ -28,15 +53,15 @@ onLoad(() => {
     <view class="goods">
       <!-- 商品主图 -->
       <view class="preview">
-        <swiper circular>
+        <swiper circular @change="onChange">
           <swiper-item v-for="item in shopDetailList?.mainPictures" :key="item">
-            <image mode="aspectFill" :src="item" />
+            <image mode="aspectFill" :src="item" @tap="imgPreview(item)" />
           </swiper-item>
         </swiper>
         <view class="indicator">
-          <text class="current">1</text>
+          <text class="current">{{ currentIndex + 1 }}</text>
           <text class="split">/</text>
-          <text class="total">5</text>
+          <text class="total">{{ shopDetailList?.mainPictures.length }}</text>
         </view>
       </view>
 
@@ -56,11 +81,11 @@ onLoad(() => {
           <text class="label">选择</text>
           <text class="text ellipsis"> 请选择商品规格 </text>
         </view>
-        <view class="item arrow">
+        <view class="item arrow" @tap="openPopup('address')">
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
-        <view class="item arrow">
+        <view class="item arrow" @tap="openPopup('server')">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮 </text>
         </view>
@@ -130,6 +155,10 @@ onLoad(() => {
       <view class="buynow"> 立即购买 </view>
     </view>
   </view>
+  <uni-popup ref="tcc" type="bottom" background-color="#fff">
+    <addressInfo v-if="propName === 'address'" @close="tcc?.close()" />
+    <serverInfo v-if="propName === 'server'" @close="tcc?.close()" />
+  </uni-popup>
 </template>
 
 <style lang="scss">
