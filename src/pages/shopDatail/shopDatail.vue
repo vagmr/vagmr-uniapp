@@ -13,6 +13,7 @@ const shopDetailList = ref<GoodsResult>()
 //封装请求函数
 const getShopDetailData = async () => {
   const res = await getShopDeatilApi(shopId.id)
+  console.log(res)
   shopDetailList.value = res.result
 }
 //加载数据
@@ -43,10 +44,10 @@ onLoad(() => {
       <view class="meta">
         <view class="price">
           <text class="symbol">¥</text>
-          <text class="number">29.90</text>
+          <text class="number">{{ shopDetailList?.price }}</text>
         </view>
-        <view class="name ellipsis">云珍·轻软旅行长绒棉方巾 </view>
-        <view class="desc"> 轻巧无捻小方巾，旅行便携 </view>
+        <view class="name ellipsis">{{ shopDetailList?.name }} </view>
+        <view class="desc"> {{ shopDetailList?.desc }}</view>
       </view>
 
       <!-- 操作面板 -->
@@ -74,23 +75,17 @@ onLoad(() => {
       <view class="content">
         <view class="properties">
           <!-- 属性详情 -->
-          <view class="item">
-            <text class="label">属性名</text>
-            <text class="value">属性值</text>
-          </view>
-          <view class="item">
-            <text class="label">属性名</text>
-            <text class="value">属性值</text>
+          <view class="item" v-for="el in shopDetailList?.details.properties" :key="el.name">
+            <text class="label">{{ el.name }}</text>
+            <text class="value">{{ el.value }}</text>
           </view>
         </view>
         <!-- 图片详情 -->
         <image
+          v-for="el in shopDetailList?.details.pictures"
+          :key="el"
           mode="widthFix"
-          src="https://yanxuan-item.nosdn.127.net/a8d266886d31f6eb0d7333c815769305.jpg"
-        ></image>
-        <image
-          mode="widthFix"
-          src="https://yanxuan-item.nosdn.127.net/a9bee1cb53d72e6cdcda210071cbd46a.jpg"
+          :src="el"
         ></image>
       </view>
     </view>
@@ -102,21 +97,17 @@ onLoad(() => {
       </view>
       <view class="content">
         <navigator
-          v-for="item in 4"
-          :key="item"
+          v-for="item in shopDetailList?.similarProducts"
+          :key="item.id"
           class="goods"
           hover-class="none"
-          :url="`/pages/goods/goods?id=`"
+          :url="`/pages/shopDatail/shopDatail?id=${item.id}`"
         >
-          <image
-            class="image"
-            mode="aspectFill"
-            src="https://yanxuan-item.nosdn.127.net/e0cea368f41da1587b3b7fc523f169d7.png"
-          ></image>
-          <view class="name ellipsis">简约山形纹全棉提花毛巾</view>
+          <image class="image" mode="aspectFill" :src="item.picture"></image>
+          <view class="name ellipsis">{{ item.name }}</view>
           <view class="price">
             <text class="symbol">¥</text>
-            <text class="number">18.50</text>
+            <text class="number">{{ item.price }}</text>
           </view>
         </navigator>
       </view>
