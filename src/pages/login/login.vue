@@ -4,6 +4,7 @@
 //
 import { onLoad } from '@dcloudio/uni-app'
 import { loginApi, mockLoginApi } from '@/services/login/loginMethod'
+import { useMemberStore } from '@/stores'
 let code = ''
 onLoad(async () => {
   const res = await wx.login()
@@ -11,8 +12,8 @@ onLoad(async () => {
 })
 /**
  * Get phone data from UniHelper button event.
- *企业开发使用，个人开发者无法使用，此函数作为回调
- * 需要在按钮中使用open-type="getPhoneNumber"
+ * 企业开发使用，个人开发者无法使用，此函数作为回调
+ * 需要在按钮中定义属性open-type="getPhoneNumber"
  * @param {UniHelper.ButtonOnGetphonenumber} e - 回调参数
  * @return {Promise<void>} - A promise that resolves to nothing.
  */
@@ -21,18 +22,31 @@ const getPhoneData: UniHelper.ButtonOnGetphonenumber = async (e) => {
   const iv = e.detail.iv!
   await loginApi({ code, encryptedData, iv })
 }
+/**
+ * Performs a mock login using the 'mockLoginApi' function and displays a success toast.
+ *
+ * @return {Promise} - A promise that resolves when the login is successful.
+ */
 const mockLogin = async () => {
   const res = await mockLoginApi('13164654387')
   console.log(res)
+  const memberStore = useMemberStore()
+  memberStore.setProfile(res.result)
+  uni.showToast({
+    title: '登录成功',
+    icon: 'success',
+  })
+  setTimeout(() => {
+    //页面跳转
+    uni.switchTab({ url: '/pages/my/my' })
+  }, 500)
 }
 </script>
 
 <template>
   <view class="viewport">
     <view class="logo">
-      <image
-        src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/logo_icon.png"
-      ></image>
+      <image src="../../static/images/loginIcon.png"></image>
     </view>
     <view class="login">
       <!-- 网页端表单登录 -->

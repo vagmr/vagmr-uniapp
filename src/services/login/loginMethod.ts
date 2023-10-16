@@ -1,5 +1,5 @@
 import { customRequest } from '@/utils/request'
-
+import type { LoginResult } from '@/types/login'
 type loginParams = {
   code: string
   encryptedData: string
@@ -18,9 +18,13 @@ export const loginApi = (data: loginParams) => {
     data,
   })
 }
-
+/**
+ * 模拟登录请求的接口
+ * @param phoneNumber - 手机号
+ * @returns - 登录接口
+ */
 export const mockLoginApi = (phoneNumber: string) => {
-  return customRequest({
+  return customRequest<LoginResult>({
     method: 'POST',
     url: '/login/wxMin/simple',
     data: {
