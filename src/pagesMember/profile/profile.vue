@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getProfileApi, putProfileApi } from '@/services/profile/profileApi'
-import type { ProfileDetail } from '@/types/login'
+import type { Gender, ProfileDetail } from '@/types/login'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useMemberStore } from '@/stores'
@@ -15,10 +15,31 @@ const getProFileData = async () => {
   const res = await getProfileApi()
   profile.value = res.result
 }
+//修改性别的函数
+const onGenderChange: UniHelper.RadioGroupOnChange = (e) => {
+  profile.value.gender = e.detail.value as Gender
+}
+//修改日期的函数
+const DataChange: UniHelper.DatePickerOnChange = (e) => {
+  profile.value.birthday = e.detail.value
+}
+
+//修改城市的函数
+let locationCode: string[] = []
+const changeRegion: UniHelper.RegionPickerOnChange = (e) => {
+  profile.value.fullLocation = e.detail.value.join(' ')
+  locationCode = e.detail.code!
+}
 //修改个人信息的请求函数
 const putProfileData = async () => {
   const res = await putProfileApi({
     nickname: profile.value?.nickname,
+    gender: profile.value.gender,
+    birthday: profile.value.birthday,
+    profession: profile.value.profession,
+    provinceCode: locationCode[0],
+    cityCode: locationCode[1],
+    countyCode: locationCode[2],
   })
   //更新仓库中的昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -84,7 +105,7 @@ onLoad(() => {
       <view class="form-content">
         <view class="form-item">
           <text class="label">账号</text>
-          <text class="account">{{ profile?.account }}</text>
+          <text class="account">vgamr(不可修改)</text>
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
@@ -98,7 +119,7 @@ onLoad(() => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
               男
@@ -112,6 +133,7 @@ onLoad(() => {
         <view class="form-item">
           <text class="label">生日</text>
           <picker
+            @change="DataChange"
             class="picker"
             mode="date"
             start="1900-01-01"
@@ -124,14 +146,19 @@ onLoad(() => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            @change="changeRegion"
+            class="picker"
+            mode="region"
+            :value="profile?.fullLocation?.split(' ')"
+          >
             <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">职业</text>
-          <input class="input" type="text" placeholder="请填写职业" :value="profile?.profession" />
+          <input class="input" type="text" placeholder="请填写职业" v-model="profile!.profession" />
         </view>
       </view>
       <!-- 提交按钮 -->
