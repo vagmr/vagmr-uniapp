@@ -11,7 +11,15 @@ const pageConfig: Required<PageParams> = {
   page: 1,
   pageSize: 10,
 }
+if (import.meta.env.DEV) {
+  pageConfig.page = 32
+}
 const finish = ref(false)
+/**
+ * Fetches guess-like items from the API and updates the guessLikeList.
+ *从Api获取猜你喜欢数据更新猜你喜欢列表
+ * @return {Promise<void>} - A promise that resolves when the guess-like items are fetched and the guessLikeList is updated.
+ */
 const getGuessLike = async () => {
   if (finish.value) {
     return uni.showToast({ title: '没有更多数据了', icon: 'none' })

@@ -2,9 +2,10 @@
 
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-
+import { updateGuessLikeList } from '@/composables/customMethod'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
+
 // 订单选项
 const orderTypes = [
   { type: 1, text: '待付款', icon: 'icon-currency' },
@@ -14,10 +15,12 @@ const orderTypes = [
 ]
 //引入个人信息仓库
 const menberStore = useMemberStore()
+//调用猜你喜欢组合式函数
+const { guessRef, onScrollLower } = updateGuessLikeList()
 </script>
 
 <template>
-  <scroll-view class="viewport" scroll-y enable-back-to-top>
+  <scroll-view @scrolltolower="onScrollLower" class="viewport" scroll-y enable-back-to-top>
     <!-- 个人资料 -->
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 情况1：已登录 -->
