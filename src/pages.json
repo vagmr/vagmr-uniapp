@@ -108,8 +108,20 @@
 					"path": "profile/profile",
 					"style": {
 						"navigationBarTitleText": "个人信息",
-            "navigationStyle": "custom",
-            "navigationBarTextStyle": "white"
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "white"
+					}
+				},
+				{
+					"path": "address/address",
+					"style": {
+						"navigationBarTitleText": "地址管理"
+					}
+				},
+				{
+					"path": "addressForm/addressForm",
+					"style": {
+						"navigationBarTitleText": ""
 					}
 				}
 			]
