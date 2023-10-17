@@ -26,8 +26,18 @@ const onChangeAvatar = () => {
         url: '/member/profile/avatar',
         name: 'file',
         filePath: filepath,
+        //是否需要这部分存疑
         success: (res) => {
-          console.log(res)
+          if (res.statusCode === 200) {
+            const avatar = JSON.parse(res.data).result.avatar
+            profile.value!.avatar = avatar
+            uni.showToast({ icon: 'success', title: '更新头像成功' })
+          } else {
+            uni.showToast({
+              title: '出现错误',
+              icon: 'error',
+            })
+          }
         },
       })
     },

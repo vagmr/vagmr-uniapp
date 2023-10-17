@@ -26,14 +26,10 @@ const { guessRef, onScrollLower } = updateGuessLikeList()
       <!-- 情况1：已登录 -->
       <view class="overview" v-if="menberStore.profile">
         <navigator url="/pagesMember/profile/profile" hover-class="none">
-          <image
-            class="avatar"
-            mode="aspectFill"
-            src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/uploads/avatar_3.jpg"
-          ></image>
+          <image class="avatar" mode="aspectFill" :src="menberStore.profile.avatar"></image>
         </navigator>
         <view class="meta">
-          <view class="nickname"> 陈戌源 </view>
+          <view class="nickname">{{ menberStore.profile.nickname }} </view>
           <navigator class="extra" url="/pagesMember/profile/profile" hover-class="none">
             <text class="update">更新头像昵称</text>
           </navigator>
@@ -45,17 +41,17 @@ const { guessRef, onScrollLower } = updateGuessLikeList()
           <image
             class="avatar gray"
             mode="aspectFill"
-            src="http://yjy-xiaotuxian-dev.oss-cn-beijing.aliyuncs.com/picture/2021-04-06/db628d42-88a7-46e7-abb8-659448c33081.png"
+            src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/uploads/avatar_3.jpg"
           >
           </image>
         </navigator>
         <view class="meta">
           <navigator url="/pages/login/login" hover-class="none" class="nickname">
-            未登录
+            陈戌源(未登录)
+            <view class="extra">
+              <text class="tips">点击登录账号</text>
+            </view>
           </navigator>
-          <view class="extra">
-            <text class="tips">点击登录账号</text>
-          </view>
         </view>
       </view>
       <navigator class="settings" url="/pagesMember/settings/settings" hover-class="none">
