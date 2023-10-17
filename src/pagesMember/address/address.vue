@@ -1,50 +1,74 @@
 <script setup lang="ts">
 //
+import { deleteAddressApi, getAddressListApi } from '@/services/address/addressApi'
+import type { AddressListParams } from '@/types/address'
+import { onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+//响应式数据接收地址列表
+const addressList = ref<AddressListParams[]>([])
+//获取地址列表的函数
+const getAddressList = async () => {
+  const res = await getAddressListApi()
+  addressList.value = res.result
+}
+/**
+ * -Deletes an address.
+ * -删除某条地址
+ * @param {string} id - The ID of the address to be deleted.
+ * @return {Promise<void>} - A promise that resolves when the address is successfully deleted.
+ */
+const deleteAddress = (id: string) => {
+  uni.showModal({
+    title: '删除地址',
+    cancelColor: '#333',
+    confirmColor: '#f00',
+    content: '确定删除该地址吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        await deleteAddressApi(id)
+        uni.showToast({
+          icon: 'success',
+          title: '删除成功',
+        })
+        getAddressList()
+      }
+    },
+  })
+}
+//每次页面显示时获取地址列表
+onShow(() => {
+  getAddressList()
+})
 </script>
 
 <template>
   <view class="viewport">
     <!-- 地址列表 -->
     <scroll-view class="scroll-view" scroll-y>
-      <view v-if="true" class="address">
-        <view class="address-list">
+      <view v-if="addressList.length" class="address">
+        <uni-swipe-action class="address-list">
           <!-- 收货地址项 -->
-          <view class="item">
+          <uni-swipe-action-item class="item" v-for="el in addressList" :key="el.id">
             <view class="item-content">
               <view class="user">
-                小王子
-                <text class="contact">13111111111</text>
-                <text v-if="true" class="badge">默认</text>
+                {{ el.receiver }}
+                <text class="contact">{{ el.contact }}</text>
+                <text v-if="el.isDefault" class="badge">默认</text>
               </view>
-              <view class="locate">广东省 广州市 天河区 程序员</view>
+              <view class="locate">{{ el.fullLocation }} {{ el.address }}</view>
               <navigator
                 class="edit"
                 hover-class="none"
-                :url="`/pagesMember/address-form/address-form?id=1`"
+                :url="`/pagesMember/addressForm/addressForm?id=${el.id}`"
               >
                 修改
               </navigator>
             </view>
-          </view>
-          <!-- 收货地址项 -->
-          <view class="item">
-            <view class="item-content">
-              <view class="user">
-                小公主
-                <text class="contact">13222222222</text>
-                <text v-if="false" class="badge">默认</text>
-              </view>
-              <view class="locate">北京市 北京市 顺义区 陈戌源</view>
-              <navigator
-                class="edit"
-                hover-class="none"
-                :url="`/pagesMember/addressForm/addressForm?id=2`"
-              >
-                修改
-              </navigator>
-            </view>
-          </view>
-        </view>
+            <template #right>
+              <button @tap="deleteAddress(el.id)" class="delete-button">删除</button>
+            </template>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
       </view>
       <view v-else class="blank">暂无收货地址</view>
     </scroll-view>
@@ -71,10 +95,11 @@ page {
   width: 50px;
   height: 100%;
   font-size: 28rpx;
-  color: #fff;
+  font-weight: 700;
+  color: #cf4444;
   border-radius: 0;
   padding: 0;
-  background-color: #cf4444;
+  background-color: rgb(131, 130, 131);
 }
 
 .viewport {

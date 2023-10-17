@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { addAddressApi } from '@/services/address/addressApi'
+import { addAddressApi, getAddressDetailApi, updateAddressApi } from '@/services/address/addressApi'
 
 // 表单数据
 const form = ref({
@@ -13,11 +13,21 @@ const form = ref({
   address: '', // 详细地址
   isDefault: 0, // 默认地址，1为是，0为否
 })
+
 //动态设置标题
 const query = defineProps<{
   id?: string
 }>()
 uni.setNavigationBarTitle({ title: query.id ? '修改地址' : '新建地址' })
+//如果是修改地址，那么将地址信息回显
+const getAddressDetail = async () => {
+  const res = await getAddressDetailApi(query.id!)
+  //如果直接赋值，就会丢失响应式
+  Object.assign(form.value, res.result)
+}
+if (query.id) {
+  getAddressDetail()
+}
 //改变收货地址
 const onChangeRegion: UniHelper.RegionPickerOnChange = (e) => {
   form.value.fullLocation = e.detail.value.join(' ')
@@ -31,27 +41,58 @@ const onChangeRegion: UniHelper.RegionPickerOnChange = (e) => {
 }
 //发送表单数据到后端
 const postAddress = async () => {
-  await addAddressApi(form.value)
-  uni.showToast({ icon: 'success', title: '保存成功' })
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 500)
+  try {
+    await formRef.value?.validate?.()
+    if (query.id) {
+      await updateAddressApi(query.id, form.value)
+      uni.showToast({ icon: 'success', title: '修改成功' })
+    } else {
+      await addAddressApi(form.value)
+      uni.showToast({ icon: 'success', title: '保存成功' })
+    }
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 500)
+  } catch (error) {
+    uni.showToast({ icon: 'error', title: '请填写完整信息' })
+  }
 }
+//表单校验
+/*校验规则  */
+const rules: UniHelper.UniFormsRules = {
+  receiver: {
+    rules: [{ required: true, errorMessage: '收货人不能为空' }],
+  },
+  contact: {
+    rules: [
+      { required: true, errorMessage: '手机号码不能为空' },
+      { pattern: /^1[3-9]\d{9}$/, errorMessage: '手机号码格式不正确' },
+    ],
+  },
+  fullLocation: {
+    rules: [{ required: true, errorMessage: '请选择地区' }],
+  },
+  address: {
+    rules: [{ required: true, errorMessage: '详细地址不能为空' }],
+  },
+}
+/* 绑定表单 */
+const formRef = ref<UniHelper.UniFormsInstance>()
 </script>
 
 <template>
   <view class="content">
-    <form>
+    <uni-forms :rules="rules" ref="formRef" :modelValue="form">
       <!-- 表单内容 -->
-      <view class="form-item">
+      <uni-forms-item name="receiver" class="form-item">
         <text class="label">收货人</text>
         <input class="input" placeholder="请填写收货人姓名" v-model="form.receiver" />
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item name="contact" class="form-item">
         <text class="label">手机号码</text>
         <input class="input" placeholder="请填写收货人手机号码" v-model="form.contact" />
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item name="fullLocation" class="form-item">
         <text class="label">所在地区</text>
         <picker
           @change="onChangeRegion"
@@ -62,21 +103,21 @@ const postAddress = async () => {
           <view v-if="form.fullLocation">{{ form.fullLocation }}</view>
           <view v-else class="placeholder">请选择省/市/区(县)</view>
         </picker>
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item name="address" class="form-item">
         <text class="label">详细地址</text>
         <input class="input" placeholder="街道、楼牌号等信息" v-model="form.address" />
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item class="form-item">
         <label class="label">设为默认地址</label>
         <switch
           @change="(e) => (e.detail.value ? (form.isDefault = 1) : (form.isDefault = 0))"
           class="switch"
           color="#27ba9b"
-          :checked="form.isDefault === 0"
+          :checked="form.isDefault === 1"
         />
-      </view>
-    </form>
+      </uni-forms-item>
+    </uni-forms>
   </view>
   <!-- 提交按钮 -->
   <button @tap="postAddress" class="button">保存并使用</button>

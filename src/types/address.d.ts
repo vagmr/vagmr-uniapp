@@ -15,3 +15,11 @@ export interface addAddressParams {
   /** 默认地址，1为是，0为否 */
   isDefault: number
 }
+
+//地址列表参数类型
+export interface AddressListParams extends addAddressParams {
+  /**地址列表参数的id */
+  id: string
+  /*省市区(县 */
+  fullLocation: string
+}
