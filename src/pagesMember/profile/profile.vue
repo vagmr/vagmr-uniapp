@@ -1,21 +1,34 @@
 <script setup lang="ts">
-import { getProfileApi } from '@/services/profile/profileApi'
+import { getProfileApi, putProfileApi } from '@/services/profile/profileApi'
 import type { ProfileDetail } from '@/types/login'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useMemberStore } from '@/stores'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
+//引入用户仓库
+const memberStore = useMemberStore()
 //个人信息的渲染
-const profile = ref<ProfileDetail>()
+const profile = ref<ProfileDetail>({} as ProfileDetail)
 //封装获取个人信息的函数
 const getProFileData = async () => {
   const res = await getProfileApi()
   profile.value = res.result
-  console.log(res)
 }
-//上传图片的请求函数
+//修改个人信息的请求函数
+const putProfileData = async () => {
+  const res = await putProfileApi({
+    nickname: profile.value?.nickname,
+  })
+  //更新仓库中的昵称
+  memberStore.profile!.nickname = res.result.nickname
 
-//定义长传头像的函数
+  uni.showToast({ icon: 'success', title: '保存成功' })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 500)
+}
+//定义上传头像的函数
 const onChangeAvatar = () => {
   uni.chooseMedia({
     count: 1,
@@ -30,7 +43,10 @@ const onChangeAvatar = () => {
         success: (res) => {
           if (res.statusCode === 200) {
             const avatar = JSON.parse(res.data).result.avatar
+            //个人信息页的数据更新
             profile.value!.avatar = avatar
+            //仓库数据更新
+            memberStore.profile!.avatar = avatar
             uni.showToast({ icon: 'success', title: '更新头像成功' })
           } else {
             uni.showToast({
@@ -72,7 +88,13 @@ onLoad(() => {
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
-          <input class="input" type="text" placeholder="请填写昵称" :value="profile?.nickname" />
+          <input
+            class="input"
+            type="text"
+            placeholder="请填写昵称"
+            @input="profile!.nickname = $event.target!.value"
+            :value="profile?.nickname"
+          />
         </view>
         <view class="form-item">
           <text class="label">性别</text>
@@ -113,7 +135,7 @@ onLoad(() => {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button @tap="putProfileData" class="form-button">保 存</button>
     </view>
   </view>
 </template>

@@ -1,5 +1,6 @@
 import { customRequest } from '@/utils/request'
 import type { ProfileDetail } from '@/types/login'
+import type { profileParams } from '@/types/profile'
 /**
  * Retrieves the profile details using the API.
  *获取用户信息的Api
@@ -20,6 +21,14 @@ export const uploadAvatarApi = (data: string) => {
   return customRequest({
     url: '/member/profile/avatar',
     method: 'POST',
+    data,
+  })
+}
+
+export const putProfileApi = (data: profileParams) => {
+  return customRequest<ProfileDetail>({
+    url: '/member/profile',
+    method: 'PUT',
     data,
   })
 }
