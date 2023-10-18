@@ -3,11 +3,16 @@
 import { getShopDeatilApi } from '@/services/category/shopDetail'
 import type { GoodsResult } from '@/types/shopDetail'
 import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import addressInfo from '@/pages/shopDatail/components/addressInfo.vue'
 import serverInfo from '@/pages/shopDatail/components/serverInfo.vue'
-import type { SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import type {
+  SkuPopupLocaldata,
+  SkuPopupInstance,
+  SkuPopupEvent,
+} from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 import vkDataGoodsSkuPopup from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup.vue'
+import { postCartApi } from '@/services/cart/cartApi'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 //接收传递过来的id
@@ -62,6 +67,36 @@ const openPopup = (prop: typeof propName.value) => {
 //sku模块设置
 const isShow = ref(false)
 const localdata = ref({} as SkuPopupLocaldata)
+//显示模式
+enum skuMode {
+  both = 1,
+  cart = 2,
+  buy = 3,
+}
+const mode = ref<skuMode>(skuMode.both)
+//打开函数
+const openSku = (m_mode: skuMode) => {
+  //显示模块
+  isShow.value = true
+  //改变显示模式
+  mode.value = m_mode
+}
+//sku模块实例
+const skuRef = ref<SkuPopupInstance>()
+//显示数据计算属性
+const skuText = computed(() => {
+  return skuRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
+})
+//加入购物车处理函数
+const onAddCart = async (e: SkuPopupEvent) => {
+  await postCartApi({ skuId: e._id, count: e.buy_num })
+  uni.showToast({
+    title: '加入购物车成功',
+    icon: 'none',
+  })
+  isShow.value = false
+}
+
 //加载数据
 onLoad(() => {
   getShopDetailData()
@@ -70,7 +105,20 @@ onLoad(() => {
 
 <template>
   <!-- sku弹窗组件 -->
-  <vkDataGoodsSkuPopup v-model="isShow" :localdata="localdata" />
+  <vkDataGoodsSkuPopup
+    v-model="isShow"
+    :localdata="localdata"
+    :mode="mode"
+    add-cart-background-color="#FFA868"
+    buy-now-background-color="#27BA9B"
+    ref="skuRef"
+    :actived-style="{
+      color: '#27BA9B',
+      borderColor: '#27BA9B',
+      backgroundColor: '#E9F8F5',
+    }"
+    @add-cart="onAddCart"
+  />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
@@ -100,9 +148,9 @@ onLoad(() => {
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow" @tap="isShow = true">
+        <view class="item arrow" @tap="openSku(skuMode.both)">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格 </text>
+          <text class="text ellipsis"> {{ skuText }} </text>
         </view>
         <view class="item arrow" @tap="openPopup('address')">
           <text class="label">送至</text>
@@ -174,8 +222,8 @@ onLoad(() => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="addcart" @tap="openSku(skuMode.cart)"> 加入购物车 </view>
+      <view class="buynow" @tap="openSku(skuMode.buy)"> 立即购买 </view>
     </view>
   </view>
   <uni-popup ref="tcc" type="bottom" background-color="#fff">
