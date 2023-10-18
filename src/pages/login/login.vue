@@ -38,7 +38,9 @@ const mockLogin = async () => {
   })
   setTimeout(() => {
     //页面跳转
-    uni.switchTab({ url: '/pages/my/my' })
+    /* uni.switchTab({ url: '/pages/my/my' }) */
+    //直接返回上一页
+    uni.navigateBack()
   }, 500)
 }
 </script>

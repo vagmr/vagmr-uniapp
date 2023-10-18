@@ -17,3 +17,13 @@ export const postCartApi = (data: CartParams) => {
     data,
   })
 }
+/**
+ * -从服务器获取购物车信息
+ * Retrieves the cart information from the server.
+ * @return {Promise<CartResult>} -A promise that resolves to the cart information.
+ */
+export const getCartApi = () => {
+  return customRequest<CartResult[]>({
+    url: '/member/cart',
+  })
+}
