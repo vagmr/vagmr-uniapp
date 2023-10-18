@@ -89,6 +89,8 @@ onShow(() => {
     getCartList()
   }
 })
+//安全距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
 <template>
@@ -180,7 +182,7 @@ onShow(() => {
     <!-- 猜你喜欢 -->
     <!-- <XtxGuess ref="guessRef"></XtxGuess> -->
     <!-- 底部占位空盒子 -->
-    <view class="toolbar-height"></view>
+    <view class="toolbar-height" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"></view>
   </scroll-view>
 </template>
 

@@ -30,12 +30,12 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
-      {
-        "path": "pages/cart/cartCom",
-        "style": {
-          "navigationBarTitleText": "购物车"
-        }
-      },
+		{
+			"path": "pages/cart/cartCom",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
+		},
 		{
 			"path": "pages/category/category",
 			"style": {
@@ -131,13 +131,25 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesOrder",
+			"pages": [
+				{
+					"path": "create/create",
+					"style": {
+						"navigationBarTitleText": "填写订单"
+					}
+				}
+			]
 		}
 	],
 	"preloadRule": {
 		"pages/my/my": {
 			"network": "all",
 			"packages": [
-				"pagesMember"
+				"pagesMember",
+        "pagesOrder"
 			]
 		}
 	}
