@@ -40,3 +40,41 @@ export const deleteShopApi = (data: { ids: string[] }) => {
     data,
   })
 }
+
+/**
+ * Sends a PUT request to update the cart with the specified SKU ID.
+ * 更新购物车数量
+ * @param {string} skuId - The SKU ID of the cart item to update.
+ * @param {Object} data - The data object containing optional properties:
+ *   - selected (boolean): Whether the cart item is selected.
+ *   - count (number): The quantity of the cart item.
+ * @returns {Promise} A Promise that resolves to the updated cart data.
+ */
+export const putCartApi = (
+  skuId: string,
+  data: {
+    selected?: boolean
+    count?: number
+  },
+) => {
+  return customRequest<CartResult>({
+    url: `/member/cart/${skuId}`,
+    method: 'PUT',
+    data,
+  })
+}
+/**
+ * 更新购物车中所有商品的选中状态。
+ *
+ * @param {boolean} selected - 新的选中状态。
+ * @return {Promise} 一个 Promise 对象，用于处理从服务器返回的响应。
+ */
+export const putSeleteAll = (selected: boolean) => {
+  return customRequest({
+    url: '/member/cart/selected',
+    method: 'PUT',
+    data: {
+      selected,
+    },
+  })
+}

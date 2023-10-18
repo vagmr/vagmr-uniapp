@@ -30,6 +30,12 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
+      {
+        "path": "pages/cart/cartCom",
+        "style": {
+          "navigationBarTitleText": "购物车"
+        }
+      },
 		{
 			"path": "pages/category/category",
 			"style": {
