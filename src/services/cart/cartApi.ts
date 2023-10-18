@@ -27,3 +27,16 @@ export const getCartApi = () => {
     url: '/member/cart',
   })
 }
+/**
+ * -删除或清空购物车
+ *Deletes a shop API request by sending a DELETE request to the '/member/cart' endpoint.
+ * @param {string[]} ids - 需求参数为skuId的数组
+ * @return {Promise} A promise that resolves with the response data.
+ */
+export const deleteShopApi = (data: { ids: string[] }) => {
+  return customRequest<{ msg: string }>({
+    url: '/member/cart',
+    method: 'DELETE',
+    data,
+  })
+}

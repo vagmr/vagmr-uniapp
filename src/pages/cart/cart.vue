@@ -1,24 +1,49 @@
 <script setup lang="ts">
 //
-import { getCartApi } from '@/services/cart/cartApi'
+import { deleteShopApi, getCartApi } from '@/services/cart/cartApi'
 import { useMemberStore } from '@/stores'
 import type { CartResult } from '@/types/cart'
-import { onLoad } from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 const memberStore = useMemberStore()
 
 /* 在页面中渲染的购物车列表 */
 const cartList = ref<CartResult[]>([])
 
+/**
+ * Retrieves the cart list asynchronously.
+ * 获取购物车数据赋值为响应式数据
+ * @return {Promise} The promise that resolves to the cart list.
+ */
 const getCartList = async () => {
   //获取购物车数据
   const res = await getCartApi()
   console.log(res)
   cartList.value = res.result
 }
+const deleteOneShop = (id: string) => {
+  uni.showModal({
+    content: '是否删除该商品',
+    title: '删除购物车',
+    confirmText: '确认删除',
+    confirmColor: '#f00',
+    success: async (res) => {
+      if (res.confirm) {
+        const result = await deleteShopApi({ ids: [id] })
+        uni.showToast({
+          title: result.msg,
+        })
+        getCartList()
+      }
+    },
+  })
+}
 
-onLoad(() => {
-  getCartList()
+onShow(() => {
+  /* 判断是否已登录，如果已登录，则获取购物车数据 */
+  if (memberStore.profile) {
+    getCartList()
+  }
 })
 </script>
 
@@ -27,7 +52,7 @@ onLoad(() => {
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
-      <view class="cart-list" v-if="true">
+      <view class="cart-list" v-if="cartList.length">
         <!-- 优惠提示 -->
         <view class="tips">
           <text class="label">满减</text>
@@ -36,7 +61,7 @@ onLoad(() => {
         <!-- 滑动操作分区 -->
         <uni-swipe-action>
           <!-- 滑动操作项 -->
-          <uni-swipe-action-item v-for="item in cartList" :key="item.id" class="cart-swipe">
+          <uni-swipe-action-item v-for="item in cartList" :key="item.skuId" class="cart-swipe">
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
@@ -63,7 +88,7 @@ onLoad(() => {
             <!-- 右侧删除按钮 -->
             <template #right>
               <view class="cart-swipe-right">
-                <button class="button delete-button">删除</button>
+                <button @tap="deleteOneShop(item.skuId)" class="button delete-button">删除</button>
               </view>
             </template>
           </uni-swipe-action-item>
