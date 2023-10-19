@@ -1,6 +1,7 @@
 <script setup lang="ts">
 //
 import { deleteAddressApi, getAddressListApi } from '@/services/address/addressApi'
+import { useAddressStore } from '@/stores/modules/addreess'
 import type { AddressListParams } from '@/types/address'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
@@ -35,6 +36,17 @@ const deleteAddress = (id: string) => {
     },
   })
 }
+//选中收货地址返回到订单页面
+const selAddress = (item: AddressListParams) => {
+  const addressStore = useAddressStore()
+  addressStore.setAddressValue(item)
+  uni.showToast({
+    title: '选择成功',
+  })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 500)
+}
 //每次页面显示时获取地址列表
 onShow(() => {
   getAddressList()
@@ -49,7 +61,7 @@ onShow(() => {
         <uni-swipe-action class="address-list">
           <!-- 收货地址项 -->
           <uni-swipe-action-item class="item" v-for="el in addressList" :key="el.id">
-            <view class="item-content">
+            <view class="item-content" @tap="selAddress(el)">
               <view class="user">
                 {{ el.receiver }}
                 <text class="contact">{{ el.contact }}</text>
@@ -60,6 +72,7 @@ onShow(() => {
                 class="edit"
                 hover-class="none"
                 :url="`/pagesMember/addressForm/addressForm?id=${el.id}`"
+                @tap.stop.prevent="() => {}"
               >
                 修改
               </navigator>

@@ -81,7 +81,7 @@ const settlement = () => {
       icon: 'error',
     })
   }
-  uni.showToast({ title: '正在开发中' })
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 onShow(() => {
   /* 判断是否已登录，如果已登录，则获取购物车数据 */

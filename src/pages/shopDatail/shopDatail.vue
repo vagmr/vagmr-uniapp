@@ -96,6 +96,13 @@ const onAddCart = async (e: SkuPopupEvent) => {
   })
   isShow.value = false
 }
+//立即购买的逻辑实现
+const onBuyCart = (e: SkuPopupEvent) => {
+  isShow.value = false
+  uni.navigateTo({
+    url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}`,
+  })
+}
 
 //加载数据
 onLoad(() => {
@@ -118,6 +125,7 @@ onLoad(() => {
       backgroundColor: '#E9F8F5',
     }"
     @add-cart="onAddCart"
+    @buy-now="onBuyCart"
   />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
