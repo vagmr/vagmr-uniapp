@@ -30,6 +30,7 @@ const orderData = ref<OrderResult>({} as OrderResult)
 const query = defineProps<{
   skuId?: string
   count?: string
+  addressId?: string
 }>()
 /**
  * 获取订单数据
@@ -40,7 +41,9 @@ const query = defineProps<{
  */
 const getOrderData = async () => {
   if (query.skuId && query.count) {
-    const res = await getOrderBUyApi({ skuId: query.skuId, count: query.count })
+    const res = query.addressId
+      ? await getOrderBUyApi({ skuId: query.skuId, count: query.count, addressId: query.addressId })
+      : await getOrderBUyApi({ skuId: query.skuId, count: query.count })
     orderData.value = res.result
   } else {
     // 获取订单数据
@@ -52,7 +55,7 @@ const getOrderData = async () => {
 //渲染默认的收货地址
 const addressStore = useAddressStore()
 const DefaultAddress = computed(() => {
-  return addressStore.SelectAddress || orderData.value.userAddresses.find((v) => v.isDefault)
+  return addressStore.SelectAddress || orderData.value.userAddresses?.find((v) => v.isDefault)
 })
 onShow(() => {
   getOrderData()

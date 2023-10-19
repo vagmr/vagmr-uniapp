@@ -1,9 +1,26 @@
 // AddressPanel.vue
 <script setup lang="ts">
+import { getAddressListApi } from '@/services/address/addressApi'
+import type { AddressListParams } from '@/types/address'
+import { onMounted } from 'vue'
+import { ref } from 'vue'
 //
 defineEmits<{
   (event: 'close'): void
+  (event: 'setAddress', el: AddressListParams): void
 }>()
+//渲染收货地址列表
+const addressList = ref<AddressListParams[]>([])
+//获取地址列表的函数
+const getAddressList = async () => {
+  const res = await getAddressListApi()
+  addressList.value = res.result
+}
+//表示地址的选中状态
+
+onMounted(() => {
+  getAddressList()
+})
 </script>
 
 <template>
@@ -14,24 +31,18 @@ defineEmits<{
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
+      <view @tap="$emit('setAddress', el)" class="item" v-for="el in addressList" :key="el.id">
+        <view class="user">{{ el.receiver }} {{ el.contact }}</view>
+        <view class="address">{{ el.fullLocation }} {{ el.address }}</view>
         <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
+      <view class="button primary">
+        <navigator hover-class="none" url="/pagesMember/addressForm/addressForm">
+          新建地址</navigator
+        >
+      </view>
       <view v-if="false" class="button primary">确定</view>
     </view>
   </view>

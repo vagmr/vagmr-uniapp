@@ -13,6 +13,7 @@ import type {
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 import vkDataGoodsSkuPopup from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup.vue'
 import { postCartApi } from '@/services/cart/cartApi'
+import type { AddressListParams } from '@/types/address'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 //接收传递过来的id
@@ -100,10 +101,15 @@ const onAddCart = async (e: SkuPopupEvent) => {
 const onBuyCart = (e: SkuPopupEvent) => {
   isShow.value = false
   uni.navigateTo({
-    url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}`,
+    url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}&addressId=${showAddress.value?.id}`,
   })
 }
-
+//选择地址的回显
+const showAddress = ref()
+const onSetAddress = (data: AddressListParams) => {
+  tcc?.value?.close()
+  showAddress.value = data
+}
 //加载数据
 onLoad(() => {
   getShopDetailData()
@@ -162,7 +168,10 @@ onLoad(() => {
         </view>
         <view class="item arrow" @tap="openPopup('address')">
           <text class="label">送至</text>
-          <text class="text ellipsis"> 请选择收获地址 </text>
+          <text class="text ellipsis" v-if="showAddress">
+            {{ showAddress.fullLocation }} {{ showAddress.address }}
+          </text>
+          <text class="text ellipsis" v-else> 请选择收获地址 </text>
         </view>
         <view class="item arrow" @tap="openPopup('server')">
           <text class="label">服务</text>
@@ -235,7 +244,7 @@ onLoad(() => {
     </view>
   </view>
   <uni-popup ref="tcc" type="bottom" background-color="#fff">
-    <addressInfo v-if="propName === 'address'" @close="tcc?.close()" />
+    <addressInfo v-if="propName === 'address'" @setAddress="onSetAddress" @close="tcc?.close()" />
     <serverInfo v-if="propName === 'server'" @close="tcc?.close()" />
   </uni-popup>
 </template>
