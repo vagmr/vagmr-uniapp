@@ -107,6 +107,7 @@ const onBuyCart = (e: SkuPopupEvent) => {
 //选择地址的回显
 const showAddress = ref()
 const onSetAddress = (data: AddressListParams) => {
+  uni.showToast({ title: '选择地址成功' })
   tcc?.value?.close()
   showAddress.value = data
 }

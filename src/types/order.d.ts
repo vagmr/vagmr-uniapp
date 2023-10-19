@@ -52,3 +52,20 @@ export type OrderResult = {
   /** 结算信息 */
   summary: summary
 }
+
+/**发送订单的参数类型声明  */
+export type OrderParams = {
+  /**  商品集合 */
+  goods: Pick<goods, 'skuId' | 'count'>[]
+  /**地址id */
+  addressId: string
+  /**配送时间类型，1为不限，2为工作日，3为双休或假日
+     枚举值:123 */
+  deliveryTimeType: number
+  /**买家留言 */
+  buyerMessage: string
+  /**支付方式，1为在线支付，2为货到付款 */
+  payType: 1 | 2
+  /**支付渠道：支付渠道，1支付宝、2微信--支付方式为在线支付时，传值，为货到付款时，不传值 */
+  payChannel: 1 | 2
+}

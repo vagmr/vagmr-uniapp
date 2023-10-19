@@ -2,6 +2,7 @@
 import { getOrderApi, getOrderBUyApi } from '@/services/order/orderApi'
 import { useAddressStore } from '@/stores/modules/addreess'
 import type { OrderResult } from '@/types/order'
+import type { AddressItem } from '@/types/shopDetail'
 import { onShow } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 
@@ -41,10 +42,20 @@ const query = defineProps<{
  */
 const getOrderData = async () => {
   if (query.skuId && query.count) {
-    const res = query.addressId
-      ? await getOrderBUyApi({ skuId: query.skuId, count: query.count, addressId: query.addressId })
-      : await getOrderBUyApi({ skuId: query.skuId, count: query.count })
-    orderData.value = res.result
+    /* 如果有地址id，则将选择的地址id显示在页面中 */
+    if (query.addressId) {
+      const res = await getOrderBUyApi({
+        skuId: query.skuId,
+        count: query.count,
+        addressId: query.addressId,
+      })
+      orderData.value = res.result
+      addressStore.setAddressValue(res.result.userAddresses[0] as AddressItem)
+    } else {
+      /* 没有传入地址id，获取的返回数据中不存在地址信息 */
+      const res = await getOrderBUyApi({ skuId: query.skuId, count: query.count })
+      orderData.value = res.result
+    }
   } else {
     // 获取订单数据
     const res = await getOrderApi()
@@ -57,6 +68,8 @@ const addressStore = useAddressStore()
 const DefaultAddress = computed(() => {
   return addressStore.SelectAddress || orderData.value.userAddresses?.find((v) => v.isDefault)
 })
+//提交订单
+
 onShow(() => {
   getOrderData()
 })
@@ -146,7 +159,9 @@ onShow(() => {
     <view class="total-pay symbol">
       <text class="number">{{ orderData.summary?.totalPayPrice.toFixed(2) }}</text>
     </view>
-    <view class="button" :class="{ disabled: true }"> 提交订单 </view>
+    <view @tap="submitOrder" class="button" :class="{ disabled: !DefaultAddress?.id }">
+      提交订单
+    </view>
   </view>
 </template>
 
