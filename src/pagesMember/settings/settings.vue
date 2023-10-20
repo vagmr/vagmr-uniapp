@@ -34,7 +34,10 @@ const onLogout = () => {
     </view>
     <!-- 列表3 -->
     <view class="list">
-      <navigator hover-class="none" class="item arrow" url=" ">关于</navigator>
+      <navigator hover-class="none" class="item arrow" url="">关于</navigator>
+      <!-- #ifdef H5 -->
+      <a hover-class="none" class="h5About" href="https://reblog.vagmrgpt.top/about">关于我</a>
+      <!-- #endif -->
     </view>
     <!-- 操作按钮 -->
     <view class="action" v-if="memberStore.profile">
@@ -44,6 +47,15 @@ const onLogout = () => {
 </template>
 
 <style lang="scss">
+.h5About {
+  display: block;
+  width: 100%;
+  height: 30px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  font-weight: 700;
+}
 page {
   background-color: #f4f4f4;
 }
