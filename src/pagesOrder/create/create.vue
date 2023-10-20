@@ -49,7 +49,7 @@ const buyAgainData = async (id: string) => {
 const getOrderData = async () => {
   if (query.orderId) {
     buyAgainData(query.orderId)
-    return uni.showToast({ title: '获取复购数据成功' })
+    return uni.showToast({ title: '获取订单数据' })
   }
   if (query.skuId && query.count) {
     /* 如果有地址id，则将选择的地址id显示在页面中 */

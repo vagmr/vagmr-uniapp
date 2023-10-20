@@ -12,7 +12,7 @@ const pageConfig: Required<PageParams> = {
   pageSize: 10,
 }
 if (import.meta.env.DEV) {
-  pageConfig.page = 32
+  pageConfig.page = 1
 }
 const finish = ref(false)
 /**

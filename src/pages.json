@@ -145,8 +145,20 @@
 					"path": "detail/detail",
 					"style": {
 						"navigationBarTitleText": "订单详情",
-            "navigationStyle": "custom",
-            "navigationBarTextStyle": "white"
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "white"
+					}
+				},
+				{
+					"path": "payment/payment",
+					"style": {
+						"navigationBarTitleText": "支付结果"
+					}
+				},
+				{
+					"path": "list/list",
+					"style": {
+						"navigationBarTitleText": "list"
 					}
 				}
 			]
