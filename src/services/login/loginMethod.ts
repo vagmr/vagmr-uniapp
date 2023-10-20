@@ -32,3 +32,16 @@ export const mockLoginApi = (phoneNumber: string) => {
     },
   })
 }
+/**
+ * 传统网页端登录
+ * @param account - 账号
+ * @param password - 密码
+ * @returns - 登录接口
+ */
+export const h5LoginAPi = (data: { account: string; password: string }) => {
+  return customRequest({
+    url: '/login',
+    method: 'POST',
+    data,
+  })
+}

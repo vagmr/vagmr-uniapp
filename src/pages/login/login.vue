@@ -3,8 +3,9 @@
 <script setup lang="ts">
 //
 import { onLoad } from '@dcloudio/uni-app'
-import { loginApi, mockLoginApi } from '@/services/login/loginMethod'
+import { h5LoginAPi, loginApi, mockLoginApi } from '@/services/login/loginMethod'
 import { useMemberStore } from '@/stores'
+// #ifdef MP-WEIXIN
 let code = ''
 onLoad(async () => {
   const res = await wx.login()
@@ -22,6 +23,8 @@ const getPhoneData: UniHelper.ButtonOnGetphonenumber = async (e) => {
   const iv = e.detail.iv!
   await loginApi({ code, encryptedData, iv })
 }
+// #endif
+
 /**
  * Performs a mock login using the 'mockLoginApi' function and displays a success toast.
  *
@@ -43,6 +46,21 @@ const mockLogin = async () => {
     uni.navigateBack()
   }, 500)
 }
+const loginH5 = async () => {
+  const res = await h5LoginAPi({ account: '13123456789', password: '123456' })
+  const memberStore = useMemberStore()
+  memberStore.setProfile(res.result as any)
+  uni.showToast({
+    title: '登录成功',
+    icon: 'success',
+  })
+  setTimeout(() => {
+    //页面跳转
+    /* uni.switchTab({ url: '/pages/my/my' }) */
+    //直接返回上一页
+    uni.navigateBack()
+  }, 500)
+}
 </script>
 
 <template>
@@ -51,16 +69,21 @@ const mockLogin = async () => {
       <image src="../../static/images/loginIcon.png"></image>
     </view>
     <view class="login">
+      <!-- #ifdef H5 -->
       <!-- 网页端表单登录 -->
-      <!-- <input class="input" type="text" placeholder="请输入用户名/手机号码" /> -->
-      <!-- <input class="input" type="text" password placeholder="请输入密码" /> -->
-      <!-- <button class="button phone">登录</button> -->
+      <input class="input" type="text" placeholder="请输入用户名/手机号码" />
+      <input class="input" type="text" password placeholder="请输入密码" />
+      <button @click="loginH5" class="button phone">登录</button>
+      <!-- #endif -->
 
+      <!-- #ifdef MP-WEIXIN -->
       <!-- 小程序端授权登录 -->
       <button class="button phone" open-type="getPhoneNumber" @getphonenumber="getPhoneData">
         <text class="icon icon-phone"></text>
         手机号快捷登录(个人开发者无法使用)
       </button>
+      <!-- #endif -->
+
       <view class="extra">
         <view class="caption">
           <text>其他登录方式</text>

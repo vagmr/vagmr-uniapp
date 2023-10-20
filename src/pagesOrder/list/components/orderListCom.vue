@@ -4,7 +4,6 @@ import type { OrderListParams, OrderListResult } from '@/types/order'
 import { ref } from 'vue'
 import { OrderStateList } from '@/types/orderConstant'
 import { OrderState } from '@/types/orderConstant'
-import { onMounted } from 'vue'
 import { confirmRecApi, payMock, wxPayAPi } from '@/services/order/pay'
 import { onShow } from '@dcloudio/uni-app'
 // 获取屏幕边界到安全区域距离
@@ -28,15 +27,17 @@ const getListInfo = async () => {
 }
 //去支付
 const onPay = async (id: string) => {
-  if (import.meta.env.DEV) {
+  if (id) {
     await payMock(id)
     uni.showToast({
       title: '支付成功',
       icon: 'success',
     })
   } else {
+    // #ifdef MP-WEIXIN
     const res = await wxPayAPi(id)
     wx.requestPayment(res.result)
+    // #endif
   }
   const order = orderListData.value?.items.find((v) => v.id === id)
   order!.orderState = OrderState.DaiFaHuo

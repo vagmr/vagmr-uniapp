@@ -108,24 +108,24 @@ const onTimeUp = () => {
  */
 /*#todo 后续可能需要删除真实数据  */
 const onPay = async () => {
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV || import.meta.env.PROD) {
     await payMock(query.id)
   } else {
+    // #ifdef MP-WEIXIN
     const res = await wxPayAPi(query.id)
     wx.requestPayment(res.result)
+    // #endif
   }
   //关闭当前页面跳转到支付结果页
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
 }
 //是否为开发环境
-const isDev = import.meta.env.DEV
+// const isDev = import.meta.env.DEV
 //模拟发货的请求
 const onPost = async () => {
-  if (isDev) {
-    await mockPostApi(query.id)
-    uni.showToast({ title: '发货成功', icon: 'success' })
-    detailDataList.value!.orderState = OrderState.DaiShuoHuo
-  }
+  await mockPostApi(query.id)
+  uni.showToast({ title: '发货成功', icon: 'success' })
+  detailDataList.value!.orderState = OrderState.DaiShuoHuo
 }
 //确认收货
 const onShouHuo = () => {
@@ -225,7 +225,7 @@ onLoad(() => {
             </navigator>
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
             <view
-              v-if="isDev && detailDataList.orderState == OrderState.DaiFaHuo"
+              v-if="detailDataList.orderState == OrderState.DaiFaHuo"
               @tap="onPost"
               class="button"
             >
