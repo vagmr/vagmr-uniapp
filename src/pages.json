@@ -140,6 +140,14 @@
 					"style": {
 						"navigationBarTitleText": "填写订单"
 					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "订单详情",
+            "navigationStyle": "custom",
+            "navigationBarTextStyle": "white"
+					}
 				}
 			]
 		}
@@ -149,7 +157,7 @@
 			"network": "all",
 			"packages": [
 				"pagesMember",
-        "pagesOrder"
+				"pagesOrder"
 			]
 		}
 	}

@@ -100,6 +100,11 @@ const onAddCart = async (e: SkuPopupEvent) => {
 //立即购买的逻辑实现
 const onBuyCart = (e: SkuPopupEvent) => {
   isShow.value = false
+  if (!showAddress.value?.id) {
+    uni.navigateTo({
+      url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}`,
+    })
+  }
   uni.navigateTo({
     url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}&addressId=${showAddress.value?.id}`,
   })

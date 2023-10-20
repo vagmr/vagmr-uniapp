@@ -1,4 +1,4 @@
-import type { OrderParams, OrderResult } from '@/types/order'
+import type { OrderParams, OrderResult, OrderInfoResult } from '@/types/order'
 import { customRequest } from '@/utils/request'
 /**
 + * 获取订单 API。
@@ -37,5 +37,22 @@ export const postOrderApi = (data: OrderParams) => {
     url: '/member/order',
     method: 'POST',
     data,
+  })
+}
+/**
+ * Retrieves order information from the API based on the provided ID.
+ * 获取订单详情列表
+ * @param {string} id - The ID of the order to retrieve information for.
+ * @return {Promise<OrderInfoResult>} - A Promise that resolves to the order information.
+ */
+export const getOrderInfoApi = (id: string) => {
+  return customRequest<OrderInfoResult>({
+    url: `/member/order/${id}`,
+  })
+}
+
+export const buyAgainApi = (id: string) => {
+  return customRequest<OrderResult>({
+    url: `/member/order/repurchase/${id}`,
   })
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getOrderApi, getOrderBUyApi } from '@/services/order/orderApi'
+import { buyAgainApi, getOrderApi, getOrderBUyApi, postOrderApi } from '@/services/order/orderApi'
 import { useAddressStore } from '@/stores/modules/addreess'
 import type { OrderResult } from '@/types/order'
 import type { AddressItem } from '@/types/shopDetail'
@@ -32,7 +32,13 @@ const query = defineProps<{
   skuId?: string
   count?: string
   addressId?: string
+  orderId?: string
 }>()
+
+const buyAgainData = async (id: string) => {
+  const res = await buyAgainApi(id)
+  orderData.value = res.result
+}
 /**
  * 获取订单数据
  * Retrieves order data.
@@ -41,6 +47,10 @@ const query = defineProps<{
  * Returns a promise that resolves to the order data.
  */
 const getOrderData = async () => {
+  if (query.orderId) {
+    buyAgainData(query.orderId)
+    return uni.showToast({ title: '获取复购数据成功' })
+  }
   if (query.skuId && query.count) {
     /* 如果有地址id，则将选择的地址id显示在页面中 */
     if (query.addressId) {
@@ -59,7 +69,6 @@ const getOrderData = async () => {
   } else {
     // 获取订单数据
     const res = await getOrderApi()
-    console.log(res)
     orderData.value = res.result
   }
 }
@@ -69,7 +78,20 @@ const DefaultAddress = computed(() => {
   return addressStore.SelectAddress || orderData.value.userAddresses?.find((v) => v.isDefault)
 })
 //提交订单
-
+const submitOrder = async () => {
+  if (!DefaultAddress.value?.id) {
+    return uni.showToast({ title: '请先选择收货地址', icon: 'error' })
+  }
+  const res = await postOrderApi({
+    addressId: DefaultAddress.value!.id,
+    buyerMessage: buyerMessage.value,
+    deliveryTimeType: activeDelivery.value.type,
+    goods: orderData.value.goods.map((v) => ({ skuId: v.skuId, count: v.count })),
+    payChannel: 2,
+    payType: 1,
+  })
+  uni.redirectTo({ url: `/pagesOrder/detail/detail?id=${res.result.id}` })
+}
 onShow(() => {
   getOrderData()
 })
