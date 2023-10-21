@@ -159,16 +159,16 @@
     </view>
   </view>
 </template>
-<style scoped>
+<style lang="scss" scoped>
+.sk-transparent {
+  color: transparent !important;
+}
 /* #ifdef  APP-PLUS || H5 */
 @import './style/hotPanel.scss';
 @import './style/categoryPanel.scss';
 @import '@/components/style/vag-Swiper.scss';
 @import '@/components//style/vag-guessLike.scss';
 /* #endif */
-.sk-transparent {
-  color: transparent !important;
-}
 .sk-text-3-3333-298 {
   background-image: linear-gradient(
     transparent 3.3333%,

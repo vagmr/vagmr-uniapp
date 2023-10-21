@@ -51,6 +51,7 @@ const putProfileData = async () => {
 }
 //定义上传头像的函数
 const onChangeAvatar = () => {
+  // #ifdef MP-WEIXIN
   uni.chooseMedia({
     count: 1,
     mediaType: ['image'],
@@ -79,6 +80,36 @@ const onChangeAvatar = () => {
       })
     },
   })
+  // #endif
+  // #ifdef APP-PLUS || H5
+  uni.chooseImage({
+    count: 1,
+    success: (res) => {
+      const filepath = res.tempFilePaths[0]
+      uni.uploadFile({
+        url: '/member/profile/avatar',
+        name: 'file',
+        filePath: filepath,
+        //是否需要这部分存疑
+        success: (res) => {
+          if (res.statusCode === 200) {
+            const avatar = JSON.parse(res.data).result.avatar
+            //个人信息页的数据更新
+            profile.value!.avatar = avatar
+            //仓库数据更新
+            memberStore.profile!.avatar = avatar
+            uni.showToast({ icon: 'success', title: '更新头像成功' })
+          } else {
+            uni.showToast({
+              title: '出现错误',
+              icon: 'error',
+            })
+          }
+        },
+      })
+    },
+  })
+  // #endif
 }
 onLoad(() => {
   getProFileData()

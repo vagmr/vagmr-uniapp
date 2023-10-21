@@ -104,10 +104,11 @@ const onBuyCart = (e: SkuPopupEvent) => {
     uni.navigateTo({
       url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}`,
     })
+  } else {
+    uni.navigateTo({
+      url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}&addressId=${showAddress.value?.id}`,
+    })
   }
-  uni.navigateTo({
-    url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}&addressId=${showAddress.value?.id}`,
-  })
 }
 //选择地址的回显
 const showAddress = ref()

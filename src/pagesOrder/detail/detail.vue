@@ -39,11 +39,14 @@ const onCopy = (id: string) => {
 const query = defineProps<{
   id: string
 }>()
+
+// #ifdef MP-WEIXIN
 //页面实例数组
 const pages = getCurrentPages()
 //当前页面的实例始终位于数组的最后一项
 const curInstance = pages.at(-1) as any
 // 页面加载完成,绑定动画效果
+
 onReady(() => {
   // 动画效果,导航栏背景色
   curInstance.animate(
@@ -76,6 +79,8 @@ onReady(() => {
       endScrollOffset: 50,
     })
 })
+// #endif
+
 //获取订单详情列表
 const detailDataList = ref<OrderInfoResult>()
 const getDetailData = async () => {
@@ -180,11 +185,16 @@ onLoad(() => {
   <!-- 自定义导航栏: 默认透明不可见, scroll-view 滚动到 50 时展示 -->
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <view class="wrap">
+      <!-- #ifdef MP-WEIXIN -->
       <navigator
         v-if="pages.length > 1"
         open-type="navigateBack"
         class="back icon-left"
       ></navigator>
+      <!-- #endif -->
+      <!-- #ifdef APP-PLUS || H5 -->
+      <navigator v-if="true" open-type="navigateBack" class="back icon-left"></navigator>
+      <!-- #endif -->
       <navigator v-else url="/pages/index/index" open-type="switchTab" class="back icon-home">
       </navigator>
       <view class="title">订单详情</view>
