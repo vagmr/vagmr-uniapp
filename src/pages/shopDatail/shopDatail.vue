@@ -23,7 +23,7 @@ const shopDetailList = ref<GoodsResult>()
 //封装请求函数
 const getShopDetailData = async () => {
   const res = await getShopDeatilApi(shopId.id)
-  console.log(res)
+  // console.log(res)
   shopDetailList.value = res.result
   // SKU组件所需格式
   localdata.value = {

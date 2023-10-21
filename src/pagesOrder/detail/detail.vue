@@ -86,7 +86,7 @@ const detailDataList = ref<OrderInfoResult>()
 const getDetailData = async () => {
   const res = await getOrderInfoApi(query.id)
   detailDataList.value = res.result
-  console.log(res)
+  // console.log(res)
   if (
     [OrderState.DaiShuoHuo, OrderState.Daipingjia, OrderState.YiWanCheng].includes(
       detailDataList.value.orderState,

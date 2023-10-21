@@ -32,7 +32,7 @@ const getPhoneData: UniHelper.ButtonOnGetphonenumber = async (e) => {
  */
 const mockLogin = async () => {
   const res = await mockLoginApi('13164654387')
-  console.log(res)
+  // console.log(res)
   const memberStore = useMemberStore()
   memberStore.setProfile(res.result)
   uni.showToast({

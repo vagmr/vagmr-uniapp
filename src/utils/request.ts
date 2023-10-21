@@ -51,7 +51,7 @@ export const customRequest = <T>(config: UniApp.RequestOptions): Promise<Data<T>
           // 401错误 -> 清理用户信息，跳转到登录页
           const memberStore = useMemberStore()
           memberStore.clearProfile()
-          uni.navigateTo({ url: 'pages/login/login' })
+          uni.redirectTo({ url: '/pages/login/login' })
           reject(res)
         }
         //其他错误 -> 根据后端错误信息轻提示

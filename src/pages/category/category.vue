@@ -18,7 +18,7 @@ const getBannerRe = async () => {
 const categoryList = ref<categoryType[]>([])
 const getCategoryData = async () => {
   const res = await categoryApi()
-  console.log(res)
+  // console.log(res)
   categoryList.value = res.result
 }
 //tab栏切换

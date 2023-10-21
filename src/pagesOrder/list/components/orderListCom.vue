@@ -25,7 +25,7 @@ const orderListData = ref<OrderListResult>()
 const getListInfo = async () => {
   const res = await getMemberOrderAPI(query)
   orderListData.value = res.result
-  console.log(res)
+  // console.log(res)
 }
 //去支付
 const onPay = async (id: string) => {
