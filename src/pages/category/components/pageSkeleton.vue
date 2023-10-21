@@ -188,6 +188,10 @@
   </view>
 </template>
 <style>
+/* #ifdef APP-PLUS || H5 */
+@import '@/components/style/vag-Swiper.scss';
+@import '../style/category.scss';
+/* #endif */
 .sk-transparent {
   color: transparent !important;
 }

@@ -6,6 +6,8 @@ import { OrderStateList } from '@/types/orderConstant'
 import { OrderState } from '@/types/orderConstant'
 import { confirmRecApi, payMock, wxPayAPi } from '@/services/order/pay'
 import { onShow } from '@dcloudio/uni-app'
+import { nextTick } from 'vue'
+import { computed } from 'vue'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const props = defineProps<{
@@ -22,8 +24,8 @@ const orderListData = ref<OrderListResult>()
 /* 请求函数 */
 const getListInfo = async () => {
   const res = await getMemberOrderAPI(query)
-  console.log(res)
   orderListData.value = res.result
+  console.log(res)
 }
 //去支付
 const onPay = async (id: string) => {
@@ -51,7 +53,6 @@ const onShouHuo = (id: string) => {
         await confirmRecApi(id)
         const order = orderListData.value?.items.find((v) => v.id === id)
         order!.orderState = OrderState.Daipingjia
-        getListInfo()
         uni.showToast({
           title: '确认收货成功',
         })
@@ -76,7 +77,12 @@ const onLower = async () => {
   }
   if (query.page! < orderListData.value!.pages) {
     query.page!++
-    await getListInfo()
+    const res = await getMemberOrderAPI(query)
+    if (res.result.items.length > 0) {
+      orderListData.value?.items.push(...res.result.items)
+    } else {
+      isfinlish.value = true // 没有更多数据
+    }
   } else {
     isfinlish.value = true
   }
@@ -151,8 +157,20 @@ onShow(() => {
       </view>
     </view>
     <!-- 底部提示文字 -->
-    <view class="loading-text" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
-      {{ isfinlish ? '没有更多数据~' : '正在加载...' }}
+    <view v-if="orderListData?.items.length">
+      <view
+        v-if="orderListData.counts <= 1"
+        class="loading-text"
+        :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"
+      >
+        已全部加载
+      </view>
+      <view v-else class="loading-text" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
+        {{ isfinlish ? '没有更多数据~' : '正在加载...' }}
+      </view>
+    </view>
+    <view v-else class="loading-text" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
+      商品列表为空
     </view>
   </scroll-view>
 </template>
@@ -207,6 +225,12 @@ onShow(() => {
       border-radius: 10rpx;
       overflow: hidden;
       position: relative;
+      /* #ifdef H5 */
+      uni-image {
+        width: 100%;
+        height: 100%;
+      }
+      /* #endif */
     }
 
     .quantity {

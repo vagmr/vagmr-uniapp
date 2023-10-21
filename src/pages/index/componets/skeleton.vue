@@ -160,6 +160,12 @@
   </view>
 </template>
 <style scoped>
+/* #ifdef  APP-PLUS || H5 */
+@import './style/hotPanel.scss';
+@import './style/categoryPanel.scss';
+@import '@/components/style/vag-Swiper.scss';
+@import '@/components//style/vag-guessLike.scss';
+/* #endif */
 .sk-transparent {
   color: transparent !important;
 }
